@@ -9,6 +9,17 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
 
+// angle and velocity fields
+
+// left info panel
+const angle1DOM = document.querySelector("#info-left .angle");
+const velocity1DOM = document.querySelector("#info-left .velocity");
+
+// right info panel
+const angle2DOM = document.querySelector("#info-rightS .angle");
+const velocity2DOM = document.querySelector("#info-right .velocity");
+
+
 // Initial state
 
 newGame();
