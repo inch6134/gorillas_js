@@ -35,7 +35,7 @@ function newGame() {
 
 function generateBuildings() {
     const buildings = [];
-    for (let index = 0; index < 8; index++) {
+    for (let index = 0; index <= 8; index++) {
         const previousBuilding = buildings[index -1];
 
         const x = previousBuilding
@@ -83,7 +83,8 @@ function draw(){
     ctx.restore();
 }
 
-// drawing formulas
+// draw() helper functions
+
 function drawBackground(){
     ctx.fillStyle = "#58a8d8";
     ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
@@ -101,8 +102,8 @@ function drawGorilla(player) {
     ctx.save();
     const building = 
         player === 1
-        ? state.buildings.at(1); // second building - player 1 location
-        : state.builings.at(-2); // second to last building - player 2 location
+        ? state.buildings.at(1) // second building - player 1 location
+        : state.buildings.at(-2); // second to last building - player 2 location
 
     ctx.translate(building.x + building.width / 2, building.height);
 
@@ -114,26 +115,97 @@ function drawGorilla(player) {
     ctx.restore();
 }
 
-function drawGorillaBody(){
-
-};
-
-function drawGorillaLeftArm(player){
-
-};
-
-function drawGorillaRightArm(player){
-
-};
-
-function drawGorillaFace(){
-    
-};
-
 
 function drawBomb() {
 
 }
+
+
+// drawGorilla() helper functions
+
+function drawGorillaBody(){
+    ctx.fillStyle = "black";
+
+    ctx.beginPath();
+
+    //starting position
+    ctx.moveTo(0, 15);
+
+    // left leg
+    ctx.lineTo(-7, 0);
+    ctx.lineTo(-20, 0);
+
+    // main body
+    ctx.lineTo(-13, 77);
+    ctx.lineTo(0, 84);
+    ctx.lineTo(13, 77);
+    
+    // right leg
+    ctx.lineTo(20, 0);
+    ctx.lineTo(7, 0);
+
+    ctx.fill();
+};
+
+function drawGorillaLeftArm(player){
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 18;
+
+    ctx.beginPath();
+    ctx.moveTo(-13, 50);
+
+    if(
+        (state.phase === "aiming" && state.currentPlayer === 1 && player === 1) ||
+        (state.phase === "celebrating" && state.currentPlayer === player)
+    ) {
+        ctx.quadraticCurveTo(-44, 63, -28, 107);
+    } else {
+        ctx.quadraticCurveTo(-44, 45, -28, 12);
+    }
+
+    ctx.stroke();
+};
+
+function drawGorillaRightArm(player){
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 18;
+
+    ctx.beginPath();
+    ctx.moveTo(13, 50);
+
+    if(
+        (state.phase === "aiming" && state.currentPlayer === 2 && player === 2) ||
+        (state.phase === "celebrating" && state.currentPlayer === player)
+    ) {
+        ctx.quadraticCurveTo(44, 63, 28, 107);
+    } else {
+        ctx.quadraticCurveTo(44, 45, 28, 12);
+    }
+
+    ctx.stroke();
+};
+
+function drawGorillaFace(){
+    ctx.strokeStyle = "lightgray";
+    ctx.lineWidth = 3;
+
+    ctx.beginPath();
+
+    // left eye
+    ctx.moveTo(-5, 70);
+    ctx.lineTo(-2, 70);
+
+    // right eye
+    ctx.moveTo(2, 70);
+    ctx.lineTo(5, 70);
+
+    // mouth
+    ctx.moveTo(-5, 62);
+    ctx.lineTo(5, 62);
+
+    ctx.stroke();
+};
+
 
 // Event handlers
 
