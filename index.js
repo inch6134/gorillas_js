@@ -30,6 +30,10 @@ const velocity2DOM = document.querySelector("#info-right .velocity");
 // bomb's grab area
 const bombGrabAreaDOM = document.getElementById("bomb-grab-area");
 
+// Congratulations panel
+const congratulationsDOM = document.getElementById("congratulations");
+const winnerDOM = document.getElementById("winner");
+
 // Initial state
 
 newGame();
@@ -295,7 +299,8 @@ function setInfo(deltaX, deltaY) {
 }
 
 function announceWinner() {
-
+  winnerDOM.innerText = `Player ${state.currentPlayer}`;
+  congratulationsDOM.style.visibility = "visible";
 }
 
 // Event handlers
