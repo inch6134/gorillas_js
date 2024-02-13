@@ -89,13 +89,47 @@ function drawBackground(){
     ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
 }
 
+
 function drawBuildings(){
-    
+    state.buildings.forEach((building) => {
+        ctx.fillStyle = "#152a47";
+        ctx.fillRect(building.x, 0, building.width, building.height);
+    })
 }
 
 function drawGorilla(player) {
+    ctx.save();
+    const building = 
+        player === 1
+        ? state.buildings.at(1); // second building - player 1 location
+        : state.builings.at(-2); // second to last building - player 2 location
 
+    ctx.translate(building.x + building.width / 2, building.height);
+
+    drawGorillaBody();
+    drawGorillaLeftArm(player);
+    drawGorillaRightArm(player);
+    drawGorillaFace();
+    
+    ctx.restore();
 }
+
+function drawGorillaBody(){
+
+};
+
+function drawGorillaLeftArm(player){
+
+};
+
+function drawGorillaRightArm(player){
+
+};
+
+function drawGorillaFace(){
+    
+};
+
 
 function drawBomb() {
 
