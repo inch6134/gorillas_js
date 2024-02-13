@@ -24,7 +24,7 @@ const angle1DOM = document.querySelector("#info-left .angle");
 const velocity1DOM = document.querySelector("#info-left .velocity");
 
 // right info panel
-const angle2DOM = document.querySelector("#info-rightS .angle");
+const angle2DOM = document.querySelector("#info-right .angle");
 const velocity2DOM = document.querySelector("#info-right .velocity");
 
 // bomb's grab area
@@ -33,6 +33,7 @@ const bombGrabAreaDOM = document.getElementById("bomb-grab-area");
 // Congratulations panel
 const congratulationsDOM = document.getElementById("congratulations");
 const winnerDOM = document.getElementById("winner");
+const newGameButtonDOM = document.getElementById("new-game");
 
 // Initial state
 
@@ -55,6 +56,13 @@ function newGame() {
   calculateScale();
 
   initializeBombPosition();
+
+  // reset HTML elements
+  congratulationsDOM.style.visibility = "hidden";
+  angle1DOM.innerText = 0;
+  velocity1DOM.innerText = 0;
+  angle2DOM.innerText = 0;
+  velocity2DOM.innerText = 0;
 
   draw();
 }
@@ -347,6 +355,8 @@ window.addEventListener("mouseup", function () {
   }
 });
 
+newGameButtonDOM.addEventListener("click", newGame);
+
 function throwBomb() {
   state.phase = "in flight";
   previousAnimationTimestamp = undefined;
@@ -423,7 +433,7 @@ function checkBuildingHit() {
 function checkGorillaHit() {
   const enemyPlayer = state.currentPlayer === 1 ? 2 : 1;
   const enemyBuilding =
-    enemyPlayer === 1 ? state.buildings.at(1) : state.buildings.at(2);
+    enemyPlayer === 1 ? state.buildings.at(1) : state.buildings.at(-2);
 
   ctx.save();
 
