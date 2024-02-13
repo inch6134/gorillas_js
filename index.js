@@ -164,6 +164,22 @@ function drawGorilla(player) {
 
 
 function drawBomb() {
+    // draw throwing trajectory
+    if (state.phase === "aiming") {
+        ctx.strokeStyle = "rgba (255, 255, 255, 0.7)";
+        ctx.setLineDash([3, 8]);
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.moveTo(state.bomb.x, state.bomb.y);
+        ctx.lineTo(
+            state.bomb.x + state.bomb.velocity.x,
+            state.bomb.y + state.bomb.velocity.y
+        )
+        ctx.stroke();
+    }
+
+    // draw circle
     ctx.fillStyle = "white";
     ctx.beginPath();
     ctx.arc(state.bomb.x, state.bomb.y, 6, 0, 2 * Math.PI);
