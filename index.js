@@ -240,6 +240,14 @@ function calculateScale() {
 
 // Event handlers
 
+window.addEventListener("resize", () =>{
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    calculateScale();
+    initializeBombPosition();
+    draw();
+})
+
 function throwBomb(){
 
 }
