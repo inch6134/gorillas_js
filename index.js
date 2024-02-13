@@ -6,6 +6,9 @@ let isDragging = false;
 let dragStartX = undefined;
 let dragStartY = undefined;
 
+// global variable for animation loop event handling
+let previousAnimationTimestamp = undefined;
+
 // references to HTML elements
 
 // canvas element and drawing context
@@ -338,9 +341,41 @@ window.addEventListener("mouseup", function () {
 });
 
 function throwBomb(){
-
+    state.phase = "in flight";
+    previousAnimationTimestamp = undefined;
+    requestAnimationFrame(animate);
 }
 
 function animate(timestamp){
+    if (previousAnimationTimestamp === undefined) {
+        previousAnimationTimestamp = timestamp;
+        requestAnimationFrame(animate);
+        return;
+    }
+    const elapsedTime = timestamp - previousAnimationTimestamp;
 
+    moveBomb(elapsedTime);
+
+    // Hit detection
+    let miss = false; // bomb hit building or out of screen
+    let hit = false; // bomb hit enemy player
+
+    // miss case
+    if (miss) {
+        //
+        return;
+    }
+
+    // hit case 
+
+    if (hit) {
+        //
+        return;
+    }
+
+    draw();
+
+    // continue animation loop
+    previousAnimationTimestamp = timestamp;
+    requestAnimationFrame(animate);
 }
