@@ -9,10 +9,29 @@ newGame();
 function newGame() {
     // Initialize game state
     state = {
-
+        phase: "aiming", // aiming | in flight | celebrating
+        currentPlayer: 1,
+        bomb: {
+            x: undefined,
+            y: undefined,
+            velocity: { x: 0, y: 0 },
+        },
+        buildings: generateBuildings(),
     }
 
+    initializeBombPosition();
+
     draw();
+}
+
+// Utility functions
+
+function generateBuildings() {
+
+}
+
+function initializeBombPosition() {
+    
 }
 
 function draw(){
@@ -26,5 +45,5 @@ function throwBomb(){
 }
 
 function animate(timestamp){
-    
+
 }
