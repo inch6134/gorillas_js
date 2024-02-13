@@ -2,7 +2,14 @@
 let state = {};
 
 // references to HTML elements
+
+// canvas element and drawing context
 const canvas = document.getElementById("game");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const ctx = canvas.getContext("2d");
+
+// Initial state
 
 newGame();
 
@@ -31,11 +38,41 @@ function generateBuildings() {
 }
 
 function initializeBombPosition() {
-    
+
 }
 
 function draw(){
+    ctx.save();
+    // flip coordinates upside-down
+    ctx.translate(0, window.innerHeight);
+    ctx.scale(1, -1);
 
+    // draw scene
+    drawBackground();
+    drawBuildings();
+    drawGorilla(1);
+    drawGorilla(2);
+    drawBomb;
+
+    // restore transformation
+    ctx.restore();
+}
+
+// drawing formulas
+function drawBackground(){
+
+}
+
+function drawBuildings(){
+    
+}
+
+function drawGorilla(player) {
+
+}
+
+function drawBomb() {
+    
 }
 
 // Event handlers
