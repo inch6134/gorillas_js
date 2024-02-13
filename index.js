@@ -16,6 +16,7 @@ newGame();
 function newGame() {
     // Initialize game state
     state = {
+        scale: 1,
         phase: "aiming", // aiming | in flight | celebrating
         currentPlayer: 1,
         bomb: {
@@ -25,6 +26,8 @@ function newGame() {
         },
         buildings: generateBuildings(),
     }
+
+    calculateScale();
 
     initializeBombPosition();
 
@@ -85,6 +88,7 @@ function draw(){
     // flip coordinates upside-down
     ctx.translate(0, window.innerHeight);
     ctx.scale(1, -1);
+    ctx.scale(state.scale, state.scale);
 
     // draw scene
     drawBackground();
@@ -101,7 +105,11 @@ function draw(){
 
 function drawBackground(){
     ctx.fillStyle = "#58a8d8";
-    ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
+    ctx.fillRect(0,
+        0,
+        window.innerWidth / state.scale,
+        window.innerHeight / state.scale
+    );
 }
 
 
@@ -223,6 +231,12 @@ function drawGorillaFace(){
     ctx.stroke();
 };
 
+function calculateScale() {
+    const lastBuilding = state.buildings.at(-1);
+    const totalWidthOfTheCity = lastBuilding.x + lastBuilding.width;
+
+    state.scale = window.innerWidth / totalWidthOfTheCity;
+}
 
 // Event handlers
 
