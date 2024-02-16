@@ -50,6 +50,7 @@ function newGame() {
       y: undefined,
       velocity: { x: 0, y: 0 },
     },
+    backgroundBuildings: generateBackgroundBuildings(),
     buildings: generateBuildings(),
   };
 
@@ -68,6 +69,28 @@ function newGame() {
 }
 
 // Utility functions
+
+function generateBackgroundBuildings() {
+  const backgroundBuildings = [];
+  for (let index = 0; index < 11; index++) {
+    const previousBuilding = backgroundBuildings[index - 1];
+
+    const x = previousBuilding
+      ? previousBuilding.x + previousBuilding.width + 4
+      : -30;
+  
+    const minWidth = 60;
+    const maxWidth = 110;
+    const width = minWidth + Math.random() * (maxWidth - minWidth);
+  
+    const minHeight = 80;
+    const maxHeight = 350;
+    const height = minHeight + Math.random() * (maxHeight - minHeight);
+  
+    backgroundBuildings.push({ x, width, height });  
+  }
+  return backgroundBuildings;
+}
 
 function generateBuildings() {
   const buildings = [];
@@ -93,7 +116,13 @@ function generateBuildings() {
       ? minHeightGorilla + Math.random() * (maxHeightGorilla - minHeightGorilla)
       : minHeight + Math.random() * (maxHeight - minHeight);
 
-    buildings.push({ x, width, height });
+    const lightsOn = [];
+    for (let index = 0; index < 50; index++) {
+      const light = Math.random() <= 0.33 ? true : false;
+      lightsOn.push(light);
+    }
+    
+    buildings.push({ x, width, height, lightsOn });
   }
   return buildings;
 }
@@ -132,6 +161,7 @@ function draw() {
 
   // draw scene
   drawBackground();
+  drawBackgroundBuildings();
   drawBuildings();
   drawGorilla(1);
   drawGorilla(2);
@@ -144,19 +174,68 @@ function draw() {
 // draw() helper functions
 
 function drawBackground() {
-  ctx.fillStyle = "#58a8d8";
+  const gradient = ctx.createLinearGradient(0, 0, 0, window.innerHeight);
+  gradient.addColorStop(1, "#F88A85");
+  gradient.addColorStop(0, "#FFC28e");
+
+  //draw sky
+  ctx.fillStyle = gradient;
   ctx.fillRect(
     0,
     0,
     window.innerWidth / state.scale,
     window.innerHeight / state.scale
   );
+
+  // draw moon
+  ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+  ctx.beginPath();
+  ctx.arc(300, 350, 60, 0, 2 * Math.PI);
+  ctx.fill();
+}
+
+function drawBackgroundBuildings() {
+  state.backgroundBuildings.forEach((building) => {
+    ctx.fillStyle = "#947285";
+    ctx.fillRect(building.x, 0, building.width, building.height);
+  });
 }
 
 function drawBuildings() {
   state.buildings.forEach((building) => {
     ctx.fillStyle = "#152a47";
     ctx.fillRect(building.x, 0, building.width, building.height);
+
+    // draw windows
+    const windowWidth = 10;
+    const windowHeight = 12;
+    const gap = 15;
+
+    const numberOfFloors = Math.ceil(
+      (building.height - gap) / (windowHeight + gap)
+    );
+
+    const roomsPerFloor = Math.floor(
+      (building.width - gap) / (windowWidth + gap)
+    );
+
+    for (let floor = 0; floor < numberOfFloors; floor++) {
+      for (let room = 0; room < roomsPerFloor; room++) {
+        if(building.lightsOn[floor * roomsPerFloor + room]) {
+          ctx.save();
+          ctx.translate(building.x + gap, building.height - gap);
+          ctx.scale(1, -1);
+
+          const x = room * (windowWidth + gap);
+          const y = floor * (windowHeight + gap);
+
+          ctx.fillStyle = "#ebb6a2";
+          ctx.fillRect(x,y,windowWidth,windowHeight);
+
+          ctx.restore();
+        }
+      }
+    }
   });
 }
 
