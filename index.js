@@ -1,6 +1,8 @@
 // state of the game
 let state = {};
 
+const blastHoleRadius = 18;
+
 // global variables for drag event handling
 let isDragging = false;
 let dragStartX = undefined;
@@ -53,6 +55,7 @@ function newGame() {
     },
     backgroundBuildings: generateBackgroundBuildings(),
     buildings: generateBuildings(),
+    blastHoles: [],
   };
 
   calculateScale();
@@ -164,7 +167,7 @@ function draw() {
   // draw scene
   drawBackground();
   drawBackgroundBuildings();
-  drawBuildings();
+  drawBuildingsWithBlastHoles();
   drawGorilla(1);
   drawGorilla(2);
   drawBomb();
@@ -239,6 +242,30 @@ function drawBuildings() {
       }
     }
   });
+}
+
+function drawBuildingsWithBlastHoles() {
+  ctx.save();
+
+  state.blastHoles.forEach((blastHole) => {
+    ctx.beginPath();
+
+    // outer shape clockwise
+    ctx.rect(
+      0,
+      0,
+      window.innerWidth / state.scale,
+      window.innerHeight / state.scale
+    );
+
+    // inner shape c/clockwise
+    ctx.arc(blastHole.x, blastHole.y, blastHoleRadius, 0, 2*Math.PI, true);
+
+    ctx.clip();
+  });
+
+  drawBuildings();
+  ctx.restore();
 }
 
 function drawGorilla(player) {
@@ -339,10 +366,14 @@ function drawGorillaLeftArm(player) {
   ctx.beginPath();
   ctx.moveTo(-13, 50);
 
-  if (
-    (state.phase === "aiming" && state.currentPlayer === 1 && player === 1) ||
-    (state.phase === "celebrating" && state.currentPlayer === player)
-  ) {
+  if ((state.phase === "aiming" && state.currentPlayer === 1 && player === 1)){
+    ctx.quadraticCurveTo(
+      -44, 
+      63, 
+      -28 - state.bomb.velocity.x / 6.25,
+      107 - state.bomb.velocity.y / 6.25
+    );
+  } else if ((state.phase === "celebrating" && state.currentPlayer === player)) {
     ctx.quadraticCurveTo(-44, 63, -28, 107);
   } else {
     ctx.quadraticCurveTo(-44, 45, -28, 12);
@@ -359,11 +390,17 @@ function drawGorillaRightArm(player) {
   ctx.moveTo(13, 50);
 
   if (
-    (state.phase === "aiming" && state.currentPlayer === 2 && player === 2) ||
-    (state.phase === "celebrating" && state.currentPlayer === player)
-  ) {
+    (state.phase === "aiming" && state.currentPlayer === 2 && player === 2)) {
+      ctx.quadraticCurveTo(
+        44, 
+        63, 
+        28 - state.bomb.velocity.x / 6.25, 
+        107 - state.bomb.velocity.y / 6.25
+      );  
+  } else if((state.phase === "celebrating" && state.currentPlayer === player)){
     ctx.quadraticCurveTo(44, 63, 28, 107);
-  } else {
+  }
+  else {
     ctx.quadraticCurveTo(44, 45, 28, 12);
   }
 
@@ -552,6 +589,22 @@ function checkBuildingHit() {
       state.bomb.x - 4 < building.x + building.width &&
       state.bomb.y - 4 < 0 + building.height
     ) {
+      // check if bomb is inside blast hole of previous hit
+      for (let j = 0; j < state.blastHoles.length; j++) {
+        const blastHole = state.blastHoles[j];
+        
+        // check distance of bomb from center of previous hit
+        const hDistance = state.bomb.x - blastHole.x;
+        const vDistance = state.bomb.y - blastHole.y;
+        const distance = Math.sqrt(
+          hDistance ** 2 + vDistance ** 2
+        );
+        if (distance < blastHoleRadius) {
+          // bomb is inside building boundary but blast hole exists
+          return false;
+        }
+      }
+      state.blastHoles.push({ x: state.bomb.x, y: state.bomb.y });
       return true; // building hit
     }
   }
