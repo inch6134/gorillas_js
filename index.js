@@ -48,6 +48,7 @@ function newGame() {
     bomb: {
       x: undefined,
       y: undefined,
+      rotation: 0,
       velocity: { x: 0, y: 0 },
     },
     backgroundBuildings: generateBackgroundBuildings(),
@@ -143,6 +144,7 @@ function initializeBombPosition() {
   state.bomb.y = gorillaY + gorillaHandOffsetY;
   state.bomb.velocity.x = 0;
   state.bomb.velocity.y = 0;
+  state.bomb.rotation = 0;
 
   // initialize position of grab area in HTML
   const grabAreaRadius = 15;
@@ -251,32 +253,53 @@ function drawGorilla(player) {
   drawGorillaBody();
   drawGorillaLeftArm(player);
   drawGorillaRightArm(player);
-  drawGorillaFace();
+  drawGorillaFace(player);
 
   ctx.restore();
 }
 
 function drawBomb() {
+  ctx.save();
+  ctx.translate(state.bomb.x, state.bomb.y);
   // draw throwing trajectory
   if (state.phase === "aiming") {
+    // move bomb with mouse while aiming
+    ctx.translate(-state.bomb.velocity.x / 6.25, -state.bomb.velocity.y / 6.25);
+
     ctx.strokeStyle = "rgba (255, 255, 255, 0.7)";
     ctx.setLineDash([3, 8]);
     ctx.lineWidth = 3;
 
     ctx.beginPath();
-    ctx.moveTo(state.bomb.x, state.bomb.y);
+    ctx.moveTo(0, 0);
     ctx.lineTo(
-      state.bomb.x + state.bomb.velocity.x,
-      state.bomb.y + state.bomb.velocity.y
+      state.bomb.velocity.x,
+      state.bomb.velocity.y
     );
     ctx.stroke();
-  }
 
-  // draw circle
-  ctx.fillStyle = "white";
-  ctx.beginPath();
-  ctx.arc(state.bomb.x, state.bomb.y, 6, 0, 2 * Math.PI);
-  ctx.fill();
+    // draw circle
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(0, 0, 6, 0, 2 * Math.PI);
+    ctx.fill();
+  } else if (state.phase === "in flight") {
+    // draw rotated banana
+    ctx.fillStyle = "white";
+    ctx.rotate(state.bomb.rotation);
+    ctx.beginPath();
+    ctx.moveTo(-8, -2);
+    ctx.quadraticCurveTo(0, 12, 8, -2);
+    ctx.quadraticCurveTo(0,2,-8,-2);
+    ctx.fill();
+  } else {
+    // draw circle
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(state.bomb.x, state.bomb.y, 6, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+  ctx.restore();
 }
 
 // drawGorilla() helper functions
@@ -292,13 +315,17 @@ function drawGorillaBody() {
   // left leg
   ctx.lineTo(-7, 0);
   ctx.lineTo(-20, 0);
+  ctx.lineTo(-17, 18);
+  ctx.lineTo(-20, 44);
 
   // main body
-  ctx.lineTo(-13, 77);
+  ctx.lineTo(-11, 77);
   ctx.lineTo(0, 84);
-  ctx.lineTo(13, 77);
+  ctx.lineTo(11, 77);
 
   // right leg
+  ctx.lineTo(20, 44);
+  ctx.lineTo(17, 18);
   ctx.lineTo(20, 0);
   ctx.lineTo(7, 0);
 
@@ -343,24 +370,45 @@ function drawGorillaRightArm(player) {
   ctx.stroke();
 }
 
-function drawGorillaFace() {
-  ctx.strokeStyle = "lightgray";
-  ctx.lineWidth = 3;
-
+function drawGorillaFace(player) {
+  // face  
+  ctx.fillStyle = "lightgray";
   ctx.beginPath();
+  ctx.arc(0, 63, 9, 0, 2*Math.PI);
+  ctx.moveTo(-3.5, 70);
+  ctx.arc(-3.5, 70, 4, 0, 2*Math.PI);
+  ctx.moveTo(+3.5, 70);
+  ctx.arc(+3.5, 70, 4, 0, 2*Math.PI);
+  ctx.fill();
 
-  // left eye
-  ctx.moveTo(-5, 70);
-  ctx.lineTo(-2, 70);
+  // eyes
+  ctx.fillStyle = "black";
+  ctx.beginPath();
+  ctx.arc(-3.5, 70 , 1.4, 0, 2*Math.PI);
+  ctx.moveTo(+3.5, 70);
+  ctx.arc(+3.5, 70, 1.4, 0, 2*Math.PI);
+  ctx.fill();
 
-  // right eye
-  ctx.moveTo(2, 70);
-  ctx.lineTo(5, 70);
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 1.4;
+
+  //nose
+  ctx.beginPath();
+  ctx.moveTo(-3.5, 66.5);
+  ctx.lineTo(-1.5, 65);
+  ctx.moveTo(3.5, 66.5);
+  ctx.lineTo(1.5, 65);
+  ctx.stroke();
 
   // mouth
-  ctx.moveTo(-5, 62);
-  ctx.lineTo(5, 62);
-
+  ctx.beginPath();
+  if (state.phase === "celebrating" && state.currentPlayer === player) {
+    ctx.moveTo(-5, 60);
+    ctx.quadraticCurveTo(0, 56, 5, 60);
+  } else {
+    ctx.moveTo(-5,56);
+    ctx.quadraticCurveTo(0, 60, 5, 56);
+  }
   ctx.stroke();
 }
 
@@ -542,4 +590,7 @@ function moveBomb(elapsedTime) {
 
   state.bomb.x += state.bomb.velocity.x * multiplier;
   state.bomb.y += state.bomb.velocity.y * multiplier;
+
+  const direction = state.currentPlayer === 1 ? -1 : +1;
+  state.bomb.rotation += direction * 5 * multiplier;
 }
