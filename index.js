@@ -2,6 +2,7 @@
 let state = {};
 
 let simulationMode = true;
+let numberOfPlayers = 1; // 0: Auto-play || 1: Single Player || 2: 2 Player
 
 const blastHoleRadius = 18;
 
@@ -49,6 +50,7 @@ function newGame() {
     scale: 1,
     phase: "aiming", // aiming | in flight | celebrating
     currentPlayer: 1,
+    round: 1,
     bomb: {
       x: undefined,
       y: undefined,
@@ -72,6 +74,8 @@ function newGame() {
   velocity2DOM.innerText = 0;
 
   draw();
+
+  if(numberOfPlayers === 0) computerThrow();
 }
 
 // Utility functions
@@ -520,6 +524,22 @@ function runSimulations(numberOfSimulations) {
   return bestThrow;
 }
 
+function computerThrow() {
+  const numberOfSimulations  = 2 + state.round * 3;
+  const bestThrow = runSimulations(numberOfSimulations);
+
+  initializeBombPosition();
+  state.bomb.velocity.x = bestThrow.velocityX;
+  state.bomb.velocity.y = bestThrow.velocityY;
+  setInfo(bestThrow.velocityX, bestThrow.velocityY);
+
+  // draw aiming gorilla
+  draw();
+
+  // simulate computer thinking
+  setTimeout(throwBomb, 1000);
+}
+
 // Event handlers
 
 window.addEventListener("resize", () => {
@@ -601,9 +621,18 @@ function animate(timestamp) {
     // miss case
     if (miss) {
       state.currentPlayer = state.currentPlayer === 1 ? 2 : 1; // switch players
+      if (state.currentPlayer === 1) state.round++;
       state.phase = "aiming";
+      
       initializeBombPosition();
       draw();
+
+      const computerThrowNext = 
+        numberOfPlayers === 0 ||
+        (numberOfPlayers ===1 && state.currentPlayer ===2 );
+
+      if (computerThrowNext) setTimeout(computerThrow, 50);
+
       return;
     }
 
