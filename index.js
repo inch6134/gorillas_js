@@ -1,6 +1,8 @@
 // state of the game
 let state = {};
 
+let simulationMode = true;
+
 const blastHoleRadius = 18;
 
 // global variables for drag event handling
@@ -473,6 +475,37 @@ function setInfo(deltaX, deltaY) {
 function announceWinner() {
   winnerDOM.innerText = `Player ${state.currentPlayer}`;
   congratulationsDOM.style.visibility = "visible";
+}
+
+function runSimulations(numberOfSimulations) {
+  let bestThrow = { velocityX: undefined, velocityY: undefined, distance: Infinity };
+  simulationMode = true;
+
+  // calculate center position of enemy
+  const enemyBuilding = 
+    state.currentPlayer === 1
+      ? state.buildings.at(-2)
+      : state.buildings.at(1);
+  const enemyX = enemyBuilding.x + enemyBuilding.width / 2;
+  const enemyY = enemyBuilding.height + 30;
+
+  for (let index = 0; index < numberOfSimulations; index++) {
+    // pick random angle and velo
+    const angleInDegrees = numberOfSimulations;
+    const angleInRadians = (angleInDegrees / 180) * Math.PI;
+    const velocity = 40 + Math.random() * 100;
+
+    // calculate horizontal and vertical velocity
+    const direction = state.currentPlayer === 1 ? 1 : -1;
+    const velocityX = Math.cos(angleInRadians) * velocity * direction;
+    const velocityY = Math.sin(angleInRadians) * velocity;
+
+    initializeBombPosition();
+    state.bomb.velocity.x = velocityX;
+    state.bomb.velocity.y = velocityY;
+
+    throwBomb();
+  }
 }
 
 // Event handlers
