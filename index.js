@@ -692,7 +692,11 @@ function checkBuildingHit() {
           return false;
         }
       }
-      state.blastHoles.push({ x: state.bomb.x, y: state.bomb.y });
+      
+      if (!simulationMode) {
+        state.blastHoles.push({ x: state.bomb.x, y: state.bomb.y });
+      }
+      
       return true; // building hit
     }
   }
