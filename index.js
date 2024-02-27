@@ -505,7 +505,19 @@ function runSimulations(numberOfSimulations) {
     state.bomb.velocity.y = velocityY;
 
     throwBomb();
+
+    // calculate distance between simulated impact and enemy
+    const distance = Math.sqrt(
+      (enemyX - simulationImpact.x) ** 2 + (enemyY - simulationImpact.y) ** 2
+    );
+
+    //if current impact is closest to enemy than previous sims pick this throw
+    if (distance < bestThrow.distance) {
+      bestThrow = { velocityX, velocityY, distance };
+    }
   }
+  simulationMode = false;
+  return bestThrow;
 }
 
 // Event handlers
@@ -555,9 +567,14 @@ window.addEventListener("mouseup", function () {
 newGameButtonDOM.addEventListener("click", newGame);
 
 function throwBomb() {
-  state.phase = "in flight";
-  previousAnimationTimestamp = undefined;
-  requestAnimationFrame(animate);
+  if (simulationMode) {
+    previousAnimationTimestamp = 0;
+    animate(16);
+  } else {
+    state.phase = "in flight";
+    previousAnimationTimestamp = undefined;
+    requestAnimationFrame(animate);
+  }
 }
 
 function animate(timestamp) {
@@ -575,6 +592,11 @@ function animate(timestamp) {
     // Hit detection
     const miss = checkFrameHit() || checkBuildingHit(); // bomb hit building or out of screen
     const hit = checkGorillaHit(); // bomb hit enemy player
+
+    if (simulationMode && (hit || miss)) {
+      simulationImpact = { x: state.bomb.x, y: state.bomb.y };
+      return;
+    }
 
     // miss case
     if (miss) {
@@ -595,11 +617,15 @@ function animate(timestamp) {
     }
   }
 
-  draw();
+  if (!simulationMode) draw();
 
   // continue animation loop
   previousAnimationTimestamp = timestamp;
-  requestAnimationFrame(animate);
+  if (simulationMode) {
+    animate(timestamp + 16);
+  } else {
+    requestAnimationFrame(animate);  
+  }
 }
 
 // hit detection helper functions
