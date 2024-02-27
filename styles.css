@@ -17,6 +17,12 @@ body {
   left: 25px;
 }
 
+#best-throw {
+  position: absolute;
+  top: 120px;
+  left: 25px;
+}
+
 #info-right {
   position: absolute;
   top: 20px;

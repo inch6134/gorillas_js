@@ -1,9 +1,18 @@
+/* Feature Ideas */
+
+// Best throw log for P1
+// Game selection menu
+// Dark / Light Mode
+// Wind physics
+// Improved simulation animation
+// Special bombs
+
 // state of the game
 let state = {};
 
 let simulationMode = false;
 let simulationImpact = {};
-let numberOfPlayers = 1; // 0: Auto-play || 1: Single Player || 2: 2 Player
+let numberOfPlayers = 0; // 0: Auto-play || 1: Single Player || 2: 2 Player
 
 const blastHoleRadius = 18;
 
@@ -28,6 +37,10 @@ const ctx = canvas.getContext("2d");
 // left info panel
 const angle1DOM = document.querySelector("#info-left .angle");
 const velocity1DOM = document.querySelector("#info-left .velocity");
+
+// best throw panel
+const bestAngleDOM = document.querySelector("#best-throw .angle");
+const bestVelocityDOM = document.querySelector("#best-throw .velocity");
 
 // right info panel
 const angle2DOM = document.querySelector("#info-right .angle");
