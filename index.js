@@ -62,6 +62,9 @@ const congratulationsDOM = document.getElementById("congratulations");
 const winnerDOM = document.getElementById("winner");
 const newGameButtonDOM = document.getElementById("new-game");
 
+// Game Mode Selector
+const gameModeButtonDOM = document.getElementById("mode-selector");
+
 // Initial state
 
 newGame();
@@ -367,8 +370,7 @@ function drawBomb() {
     ctx.fill();
   } else if (state.phase === "celebrating") {
     ctx.restore();
-  }
-  else {
+  } else {
     // draw circle
     ctx.fillStyle = "white";
     ctx.beginPath();
@@ -689,6 +691,10 @@ window.addEventListener("mouseup", function () {
 });
 
 newGameButtonDOM.addEventListener("click", newGame);
+
+gameModeButtonDOM.addEventListener("hover", () => {
+  gameModeButtonDOM.querySelector(div).style.visibility = "visible";
+});
 
 function throwBomb() {
   if (simulationMode) {

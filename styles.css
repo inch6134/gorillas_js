@@ -50,3 +50,31 @@ body {
   position: absolute;
   visibility: hidden;
 }
+
+#game-mode {
+  position: absolute;
+  top: 35px;
+  right: 150px;
+}
+
+.dropdown {
+  height: 30px;
+  width: 120px;
+  font-family: monospace;
+  color: white;
+  background-color: transparent;
+  border: 2px solid white;
+}
+
+.dropdown-menu {
+  width: 120px;
+  color: black;
+  background-color: white;
+  font-size: 12px;
+  visibility: hidden;
+}
+
+.dropdown-menu > div {
+  padding: 5px;
+  box-sizing: border-box;
+}
