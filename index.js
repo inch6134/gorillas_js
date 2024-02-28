@@ -365,7 +365,10 @@ function drawBomb() {
     ctx.quadraticCurveTo(0, 12, 8, -2);
     ctx.quadraticCurveTo(0, 2, -8, -2);
     ctx.fill();
-  } else {
+  } else if (state.phase === "celebrating") {
+    ctx.restore();
+  }
+  else {
     // draw circle
     ctx.fillStyle = "white";
     ctx.beginPath();
