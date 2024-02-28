@@ -12,7 +12,11 @@ let state = {};
 
 let simulationMode = false;
 let simulationImpact = {};
-let numberOfPlayers = 0; // 0: Auto-play || 1: Single Player || 2: 2 Player
+let numberOfPlayers = 1; // 0: Auto-play || 1: Single Player || 2: 2 Player
+let bestPlayer1Throw = {};
+let bestPlayer2Throw = {};
+let lastThrowAngle = undefined;
+let lastThrowVelo = undefined;
 
 const blastHoleRadius = 18;
 
@@ -37,14 +41,16 @@ const ctx = canvas.getContext("2d");
 // left info panel
 const angle1DOM = document.querySelector("#info-left .angle");
 const velocity1DOM = document.querySelector("#info-left .velocity");
-
-// best throw panel
-const bestAngleDOM = document.querySelector("#best-throw .angle");
-const bestVelocityDOM = document.querySelector("#best-throw .velocity");
+const bestThrow1DOM = document.querySelector("#best-throw-left");
+const bestAngle1DOM = document.querySelector("#best-throw-left .angle");
+const bestVelocity1DOM = document.querySelector("#best-throw-left .velocity");
 
 // right info panel
 const angle2DOM = document.querySelector("#info-right .angle");
 const velocity2DOM = document.querySelector("#info-right .velocity");
+const bestThrow2DOM = document.querySelector("#best-throw-right");
+const bestAngle2DOM = document.querySelector("#best-throw-right .angle");
+const bestVelocity2DOM = document.querySelector("#best-throw-right .velocity");
 
 // bomb's grab area
 const bombGrabAreaDOM = document.getElementById("bomb-grab-area");
@@ -76,16 +82,34 @@ function newGame() {
     blastHoles: [],
   };
 
+  bestPlayer1Throw = {
+    angle: undefined,
+    velocity: undefined,
+    distance: Infinity,
+  };
+
+  bestPlayer2Throw = {
+    angle: undefined,
+    velocity: undefined,
+    distance: Infinity,
+  };
+
   calculateScale();
 
   initializeBombPosition();
 
   // reset HTML elements
   congratulationsDOM.style.visibility = "hidden";
+  // bestThrow1DOM.style.visibility = "hidden";
+  // bestThrow2DOM.style.visibility = "hidden";
   angle1DOM.innerText = 0;
   velocity1DOM.innerText = 0;
   angle2DOM.innerText = 0;
   velocity2DOM.innerText = 0;
+  bestAngle1DOM.innerText = 0;
+  bestAngle2DOM.innerText = 0;
+  bestVelocity1DOM.innerText = 0;
+  bestVelocity2DOM.innerText = 0;
 
   draw();
 
@@ -510,6 +534,8 @@ function setInfo(deltaX, deltaY) {
     angle2DOM.innerText = Math.round(angleInDegrees);
     velocity2DOM.innerText = Math.round(hypotenuse);
   }
+  lastThrowAngle = angleInDegrees;
+  lastThrowVelo = hypotenuse;
 }
 
 function announceWinner() {
@@ -560,6 +586,39 @@ function runSimulations(numberOfSimulations) {
   }
   simulationMode = false;
   return bestThrow;
+}
+
+function calcBestPlayerThrow(impactX, impactY) {
+  // calculate center position of enemy
+  const enemyBuilding =
+    state.currentPlayer === 1 ? state.buildings.at(-2) : state.buildings.at(1);
+  const enemyX = enemyBuilding.x + enemyBuilding.width / 2;
+  const enemyY = enemyBuilding.height + 30;
+
+  // calculate distance between simulated impact and enemy
+  const distance = Math.sqrt((enemyX - impactX) ** 2 + (enemyY - impactY) ** 2);
+
+  // calculate angle and velocity of throw
+  const hypotenuse = Math.sqrt(impactX ** 2 + impactY ** 2);
+  const angleInRadians = Math.asin(impactY / hypotenuse);
+  const angleInDegrees = (angleInRadians / Math.PI) * 180;
+
+  //if current impact is closest to enemy than previous sims pick this throw
+  if (distance < bestPlayer1Throw.distance && state.currentPlayer === 1) {
+    bestPlayer1Throw.angle = lastThrowAngle;
+    bestPlayer1Throw.velocity = lastThrowVelo;
+    bestPlayer1Throw.distance = distance;
+    bestAngle1DOM.innerText = Math.round(bestPlayer1Throw.angle);
+    bestVelocity1DOM.innerText = Math.round(bestPlayer1Throw.velocity);
+  }
+
+  if (distance < bestPlayer2Throw.distance && state.currentPlayer === 2) {
+    bestPlayer2Throw.angle = lastThrowAngle;
+    bestPlayer2Throw.velocity = lastThrowVelo;
+    bestPlayer2Throw.distance = distance;
+    bestAngle2DOM.innerText = Math.round(bestPlayer2Throw.angle);
+    bestVelocity2DOM.innerText = Math.round(bestPlayer2Throw.velocity);
+  }
 }
 
 function computerThrow() {
@@ -658,6 +717,7 @@ function animate(timestamp) {
 
     // miss case
     if (miss) {
+      if (numberOfPlayers) calcBestPlayerThrow(state.bomb.x, state.bomb.y);
       state.currentPlayer = state.currentPlayer === 1 ? 2 : 1; // switch players
       if (state.currentPlayer === 1) state.round++;
       state.phase = "aiming";
