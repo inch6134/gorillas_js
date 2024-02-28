@@ -1,7 +1,9 @@
 /* Feature Ideas */
 
-// Best throw log for P1
+// Best throw log for human players
+// fix P2 win visual glitch
 // Game selection menu
+
 // Dark / Light Mode
 // Wind physics
 // Improved simulation animation
@@ -12,7 +14,7 @@ let state = {};
 
 let simulationMode = false;
 let simulationImpact = {};
-let numberOfPlayers = 1; // 0: Auto-play || 1: Single Player || 2: 2 Player
+let numberOfPlayers = 2; // 0: Auto-play || 1: Single Player || 2: 2 Player
 let bestPlayer1Throw = {};
 let bestPlayer2Throw = {};
 let lastThrowAngle = undefined;
@@ -100,8 +102,8 @@ function newGame() {
 
   // reset HTML elements
   congratulationsDOM.style.visibility = "hidden";
-  // bestThrow1DOM.style.visibility = "hidden";
-  // bestThrow2DOM.style.visibility = "hidden";
+  bestThrow1DOM.style.visibility = "hidden";
+  bestThrow2DOM.style.visibility = "hidden";
   angle1DOM.innerText = 0;
   velocity1DOM.innerText = 0;
   angle2DOM.innerText = 0;
@@ -215,6 +217,8 @@ function draw() {
   drawGorilla(1);
   drawGorilla(2);
   drawBomb();
+  if (numberOfPlayers) bestThrow1DOM.style.visibility = "visible";
+  if (numberOfPlayers === 2) bestThrow2DOM.style.visibility = "visible";
 
   // restore transformation
   ctx.restore();
