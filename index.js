@@ -1,7 +1,5 @@
 /* Feature Ideas */
 
-// Game selection menu
-
 // Dark / Light Mode
 // Wind physics
 // Improved simulation animation
@@ -689,73 +687,85 @@ window.addEventListener("mouseup", function () {
   }
 });
 
-// newGameButtonDOM.addEventListener("click", newGame);
-
 newGameButtonDOM.addEventListener("mouseover", () => {
-  congratulationsDOM.querySelector(".dropdown-menu").style.visibility = "visible";
-  const gameModes = congratulationsDOM.querySelector(".dropdown-menu").querySelectorAll('div');
-  gameModes.forEach(mode => {
-    mode.addEventListener('mouseover', () => {
-      mode.style.color = 'white';
-      mode.style.backgroundColor = 'grey';
-    })
-    mode.addEventListener('click', () => {
+  congratulationsDOM.querySelector(".dropdown-menu").style.visibility =
+    "visible";
+  const gameModes = congratulationsDOM
+    .querySelector(".dropdown-menu")
+    .querySelectorAll("div");
+  gameModes.forEach((mode) => {
+    mode.addEventListener("mouseover", () => {
+      mode.style.color = "white";
+      mode.style.backgroundColor = "grey";
+    });
+    mode.addEventListener("mouseleave", () => {
+      mode.style.color = "black";
+      mode.style.backgroundColor = "white";
+    });
+    mode.addEventListener("click", () => {
       switch (mode.innerText) {
-        case 'Single Player':
+        case "Single Player":
           numberOfPlayers = 1;
           newGame();
           break;
-      
-        case 'Multi Player':
+
+        case "Multi Player":
           numberOfPlayers = 2;
           newGame();
           break;
 
-        case 'Autoplay':
+        case "Autoplay":
           numberOfPlayers = 0;
           newGame();
           break;
-        
+
         default:
           break;
       }
-    })
+    });
   });
 });
 
 congratulationsDOM.addEventListener("mouseleave", () => {
-  congratulationsDOM.querySelector(".dropdown-menu").style.visibility = "hidden";
+  congratulationsDOM.querySelector(".dropdown-menu").style.visibility =
+    "hidden";
 });
 
 gameModeButtonDOM.addEventListener("mouseover", () => {
   gameModeDivDOM.querySelector(".dropdown-menu").style.visibility = "visible";
-  const gameModes = gameModeDivDOM.querySelector(".dropdown-menu").querySelectorAll('div');
-  gameModes.forEach(mode => {
-    mode.addEventListener('mouseover', () => {
-      mode.style.color = 'white';
-      mode.style.backgroundColor = 'grey';
-    })
-    mode.addEventListener('click', () => {
+  const gameModes = gameModeDivDOM
+    .querySelector(".dropdown-menu")
+    .querySelectorAll("div");
+  gameModes.forEach((mode) => {
+    mode.addEventListener("mouseover", () => {
+      mode.style.color = "white";
+      mode.style.backgroundColor = "grey";
+    });
+    mode.addEventListener("mouseleave", () => {
+      mode.style.color = "black";
+      mode.style.backgroundColor = "white";
+    });
+    mode.addEventListener("click", () => {
       switch (mode.innerText) {
-        case 'Single Player':
+        case "Single Player":
           numberOfPlayers = 1;
           newGame();
           break;
-      
-        case 'Multi Player':
+
+        case "Multi Player":
           numberOfPlayers = 2;
           newGame();
           break;
 
-        case 'Autoplay':
+        case "Autoplay":
           numberOfPlayers = 0;
           newGame();
           break;
-        
+
         default:
           break;
       }
-    })
+    });
   });
 });
 
