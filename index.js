@@ -1,7 +1,5 @@
 /* Feature Ideas */
 
-// Best throw log for human players
-// fix P2 win visual glitch
 // Game selection menu
 
 // Dark / Light Mode
@@ -14,7 +12,7 @@ let state = {};
 
 let simulationMode = false;
 let simulationImpact = {};
-let numberOfPlayers = 2; // 0: Auto-play || 1: Single Player || 2: 2 Player
+let numberOfPlayers = 1; // 0: Auto-play || 1: Single Player || 2: 2 Player
 let bestPlayer1Throw = {};
 let bestPlayer2Throw = {};
 let lastThrowAngle = undefined;
@@ -64,6 +62,7 @@ const newGameButtonDOM = document.getElementById("new-game");
 
 // Game Mode Selector
 const gameModeButtonDOM = document.getElementById("mode-selector");
+const gameModeDivDOM = document.getElementById("game-mode");
 
 // Initial state
 
@@ -692,8 +691,20 @@ window.addEventListener("mouseup", function () {
 
 newGameButtonDOM.addEventListener("click", newGame);
 
-gameModeButtonDOM.addEventListener("hover", () => {
-  gameModeButtonDOM.querySelector(div).style.visibility = "visible";
+newGameButtonDOM.addEventListener("mouseover", () => {
+  congratulationsDOM.querySelector(".dropdown-menu").style.visibility = "visible";
+});
+
+congratulationsDOM.addEventListener("mouseleave", () => {
+  congratulationsDOM.querySelector(".dropdown-menu").style.visibility = "hidden";
+});
+
+gameModeButtonDOM.addEventListener("mouseover", () => {
+  gameModeDivDOM.querySelector(".dropdown-menu").style.visibility = "visible";
+});
+
+gameModeDivDOM.addEventListener("mouseleave", () => {
+  gameModeDivDOM.querySelector(".dropdown-menu").style.visibility = "hidden";
 });
 
 function throwBomb() {
