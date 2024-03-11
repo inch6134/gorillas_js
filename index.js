@@ -689,10 +689,38 @@ window.addEventListener("mouseup", function () {
   }
 });
 
-newGameButtonDOM.addEventListener("click", newGame);
+// newGameButtonDOM.addEventListener("click", newGame);
 
 newGameButtonDOM.addEventListener("mouseover", () => {
   congratulationsDOM.querySelector(".dropdown-menu").style.visibility = "visible";
+  const gameModes = congratulationsDOM.querySelector(".dropdown-menu").querySelectorAll('div');
+  gameModes.forEach(mode => {
+    mode.addEventListener('mouseover', () => {
+      mode.style.color = 'white';
+      mode.style.backgroundColor = 'grey';
+    })
+    mode.addEventListener('click', () => {
+      switch (mode.innerText) {
+        case 'Single Player':
+          numberOfPlayers = 1;
+          newGame();
+          break;
+      
+        case 'Multi Player':
+          numberOfPlayers = 2;
+          newGame();
+          break;
+
+        case 'Autoplay':
+          numberOfPlayers = 0;
+          newGame();
+          break;
+        
+        default:
+          break;
+      }
+    })
+  });
 });
 
 congratulationsDOM.addEventListener("mouseleave", () => {
@@ -701,6 +729,34 @@ congratulationsDOM.addEventListener("mouseleave", () => {
 
 gameModeButtonDOM.addEventListener("mouseover", () => {
   gameModeDivDOM.querySelector(".dropdown-menu").style.visibility = "visible";
+  const gameModes = gameModeDivDOM.querySelector(".dropdown-menu").querySelectorAll('div');
+  gameModes.forEach(mode => {
+    mode.addEventListener('mouseover', () => {
+      mode.style.color = 'white';
+      mode.style.backgroundColor = 'grey';
+    })
+    mode.addEventListener('click', () => {
+      switch (mode.innerText) {
+        case 'Single Player':
+          numberOfPlayers = 1;
+          newGame();
+          break;
+      
+        case 'Multi Player':
+          numberOfPlayers = 2;
+          newGame();
+          break;
+
+        case 'Autoplay':
+          numberOfPlayers = 0;
+          newGame();
+          break;
+        
+        default:
+          break;
+      }
+    })
+  });
 });
 
 gameModeDivDOM.addEventListener("mouseleave", () => {
